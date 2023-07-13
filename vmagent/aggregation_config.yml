@@ -1,0 +1,32 @@
+# counter, default (10s)
+- match: "{metric_type='counter',metric_interval='default'}"
+  interval: 60s
+  without: [instance, metric_type, metric_interval]
+  outputs: ["total", "sum_samples", "increase", "max"]
+  output_relabel_configs:
+    - source_labels: [ __name__ ]
+      target_label: __name__
+      regex: "(.+):.+_(.+)"
+      replacement: "$1:$2"
+
+# summary, default (10s)
+- match: "{metric_type='summary',metric_interval='default'}"
+  interval: 10s
+  without: [instance, metric_type, metric_interval]
+  outputs: ["quantiles(0.50, 0.99)"]
+  output_relabel_configs:
+    - source_labels: [ __name__ ]
+      target_label: __name__
+      regex: "(.+):.+_(.+)"
+      replacement: "$1:$2"
+
+# histogram, default (10s)
+- match: "{metric_type='histogram',metric_interval='default'}"
+  interval: 10s
+  without: [instance, metric_type, metric_interval]
+  outputs: ["histogram_bucket"]
+  output_relabel_configs:
+    - source_labels: [ __name__ ]
+      target_label: __name__
+      regex: "(.+):.+_(.+)"
+      replacement: "$1:$2"

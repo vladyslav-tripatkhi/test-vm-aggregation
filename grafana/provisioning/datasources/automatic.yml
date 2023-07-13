@@ -1,0 +1,4 @@
+datasources:
+  - name: VictoriaMetrics
+    type: prometheus
+    url: http://vm:8428

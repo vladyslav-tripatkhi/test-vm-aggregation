@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+  vm:
+    container_name: vm
+    image: victoriametrics/victoria-metrics
+    command:
+      - "-graphiteListenAddr=:2003"
+    ports:
+      - 8428:8428
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    depends_on:
+      - vm
+
+  vmagent:
+    container_name: vmagent
+    image: victoriametrics/vmagent
+    command:
+      - "-remoteWrite.url=http://vm:8428/api/v1/write"
+      - "-remoteWrite.streamAggr.keepInput=true"
+      - "-remoteWrite.streamAggr.config=/conf/aggregation_config.yml"
+    ports:
+      - 8429:8429
+    volumes:
+      - ./vmagent/aggregation_config.yml:/conf/aggregation_config.yml
+    depends_on:
+      - vm
+
+  app:
+    build: ./
+    container_name: app
+    environment:
+      - CONFIG_FILE_NAME=/opt/app/config/docker.yml
+    volumes:
+      - ./config:/opt/app/config
+    ports:
+      - 8080:8080
+    depends_on:
+      - vm
+      - vmagent

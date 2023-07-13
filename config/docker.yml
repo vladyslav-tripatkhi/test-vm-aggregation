@@ -1,0 +1,89 @@
+---
+host: 0.0.0.0
+port: 8080
+vm_import_url: "http://vmagent:8429/api/v1/import/prometheus"
+push_interval: 5s
+default_labels:
+metrics:
+- name: test_counter_0
+  labels:
+    metric_type: counter
+    metric_interval: default
+  value: 10
+  interval: 5s
+- name: test_counter_0
+  labels:
+    metric_type: counter
+    metric_interval: default
+  value: 15
+  interval: 5s
+- name: test_counter_1
+  labels:
+    metric_type: counter
+    metric_interval: default
+    instance: first
+  value: 10
+  interval: 5s
+- name: test_counter_1
+  labels:
+    metric_type: counter
+    metric_interval: default
+    instance: second
+  value: 15
+  interval: 5s
+- name: sporadic_counter
+  labels:
+    metric_type: counter
+    metric_interval: default
+    instance: first
+    metric_source: lambda
+  value: 100
+  interval: 65s
+- name: sporadic_counter
+  labels:
+    metric_type: counter
+    metric_interval: default
+    instance: second
+    metric_source: lambda
+  value: 100
+  interval: 66s
+- name: sporadic_counter
+  labels:
+    metric_type: counter
+    metric_interval: default
+    instance: first
+    metric_source: lambda
+  value: 100
+  interval: 90s
+- name: test_summary_0
+  type: summary
+  labels:
+    metric_type: summary
+    metric_interval: default
+    instance: first
+  value: 10
+  interval: 10s
+- name: test_summary_0
+  type: summary
+  labels:
+    metric_type: summary
+    metric_interval: default
+    instance: second
+  value: 15
+  interval: 10s
+- name: test_histogram_0
+  type: histogram
+  labels:
+    metric_type: histogram
+    metric_interval: default
+    instance: first
+  value: 10
+  interval: 10s
+- name: test_histogram_0
+  type: histogram
+  labels:
+    metric_type: histogram
+    metric_interval: default
+    instance: second
+  value: 15
+  interval: 10s

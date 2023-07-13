@@ -1,0 +1,7 @@
+./config
+./grafana
+./vmagent
+.dockerignore
+docker-compose.yml
+Dockerfile
+*.md

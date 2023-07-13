@@ -1,0 +1,12 @@
+---
+host: localhost
+port: 8080
+vm_import_url: "http://localhost:8429/api/v1/import/prometheus"
+default_labels:
+metrics:
+- name: test_counter_0
+  labels:
+    metric_type: counter
+    metric_interval: default
+  value: 10
+  interval: 5s
