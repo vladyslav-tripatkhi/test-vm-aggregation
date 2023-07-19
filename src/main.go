@@ -21,6 +21,7 @@ func (l labels) String() string {
 		tmpSlice = append(tmpSlice, fmt.Sprintf(`%s="%s"`, k, v))
 	}
 
+	sort.Strings(tmpSlice)
 	return strings.Join(tmpSlice, ",")
 }
 
