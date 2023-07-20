@@ -24,7 +24,7 @@ services:
 
   vmagent:
     container_name: vmagent
-    image: victoriametrics/vmagent
+    image: victoriametrics/vmagent:heads-issue-4667-0-g2f62ea390
     command:
       - "-remoteWrite.url=http://vm:8428/api/v1/write"
       - "-remoteWrite.streamAggr.keepInput=true"

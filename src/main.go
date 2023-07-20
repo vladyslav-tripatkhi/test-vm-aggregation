@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"net/http"
 	"os"
+	"sort"
 	"strings"
 	"time"
 
@@ -26,11 +28,24 @@ func (l labels) String() string {
 }
 
 type metric struct {
-	Type     string        `yaml:"type"`
-	Name     string        `yaml:"name"`
-	Labels   labels        `yaml:"labels"`
-	Value    int           `yaml:"value"`
-	Interval time.Duration `yaml:"interval"`
+	Type        string        `yaml:"type"`
+	Name        string        `yaml:"name"`
+	Labels      labels        `yaml:"labels"`
+	Value       int           `yaml:"value"`
+	Interval    time.Duration `yaml:"interval,omitempty"`
+	RandomValue *randomValue  `yaml:"random_value,omitempty"`
+}
+
+type randomValue struct {
+	Min float64 `yaml:"min"`
+	Max float64 `yaml:"max"`
+}
+
+func (m *metric) GetValue() float64 {
+	if m.RandomValue == nil {
+		return float64(m.Value)
+	}
+	return m.RandomValue.Min + (m.RandomValue.Max-m.RandomValue.Min)*rand.Float64()
 }
 
 type config struct {
@@ -73,7 +88,10 @@ func newConfig(fileName string) (*config, error) {
 	}
 
 	c.set = metrics.NewSet()
-	c.set.InitPush(c.VmImportUrl, c.PushInterval, c.DefaultLabels.String())
+	err = c.set.InitPush(c.VmImportUrl, c.PushInterval, c.DefaultLabels.String())
+	if err != nil {
+		return nil, err
+	}
 
 	return c, nil
 }
@@ -95,18 +113,21 @@ func (c *config) Start() {
 func (m *metric) Send(s *metrics.Set) {
 	fullName := fmt.Sprintf("%s{%s}", m.Name, m.Labels)
 	log.Infof("sending metric %s with value %d every %v", fullName, m.Value, m.Interval)
+	metricGaugeFunc := func() float64 { return m.GetValue() }
 
 	for {
 		switch m.Type {
 		case "histogram":
 			h := s.GetOrCreateHistogram(fullName)
-			h.Update(float64(m.Value))
+			h.Update(m.GetValue())
 		case "summary":
 			s := s.GetOrCreateSummary(fullName)
-			s.Update(float64(m.Value))
+			s.Update(m.GetValue())
+		case "gauge":
+			s.GetOrCreateGauge(fullName, metricGaugeFunc)
 		default:
 			c := s.GetOrCreateCounter(fullName)
-			c.Add(m.Value)
+			c.Add(int(m.GetValue()))
 		}
 		time.Sleep(m.Interval)
 	}

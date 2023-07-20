@@ -442,7 +442,7 @@
             "uid": "P4169E866C3094E38"
           },
           "editorMode": "code",
-          "expr": "histogram_quantiles(\"quantile\", 0.50, 0.99, test_histogram_0_bucket:bucket{})",
+          "expr": "histogram_quantiles(\"quantile\", 0.50, 0.99, test_gauge_0:bucket{})",
           "instant": false,
           "range": true,
           "refId": "A"
@@ -453,7 +453,7 @@
             "uid": "P4169E866C3094E38"
           },
           "editorMode": "code",
-          "expr": "histogram_quantiles(\"quantile\", 0.50 ,0.99, test_histogram_0_bucket{})",
+          "expr": "histogram_quantiles(\"quantile\", 0.50, 0.99, histogram_over_time(test_gauge_0[30s]))",
           "hide": false,
           "instant": false,
           "range": true,
@@ -464,7 +464,7 @@
       "type": "timeseries"
     },
     {
-      "collapsed": true,
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -473,7 +473,7 @@
       },
       "id": 8,
       "panels": [],
-      "title": "Summaries",
+      "title": "Quantiles",
       "type": "row"
     },
     {
@@ -559,7 +559,8 @@
             "uid": "P4169E866C3094E38"
           },
           "editorMode": "code",
-          "expr": "test_summary_0_sum{}",
+          "expr": "sum(quantiles_over_time('quantile', 0.50, 0.99, test_gauge_0[30s]))",
+          "hide": false,
           "instant": false,
           "range": true,
           "refId": "A"
@@ -570,14 +571,14 @@
             "uid": "P4169E866C3094E38"
           },
           "editorMode": "code",
-          "expr": "test_summary_0_sum:quantiles{}",
+          "expr": "sum(test_gauge_0:quantiles[30s])",
           "hide": false,
           "instant": false,
           "range": true,
           "refId": "B"
         }
       ],
-      "title": "Summaries",
+      "title": "Gauges",
       "type": "timeseries"
     }
   ],

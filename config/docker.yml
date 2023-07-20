@@ -55,35 +55,13 @@ metrics:
     metric_source: lambda
   value: 100
   interval: 90s
-- name: test_summary_0
-  type: summary
+- name: test_gauge_0
+  type: gauge
   labels:
-    metric_type: summary
+    metric_type: gauge
     metric_interval: default
     instance: first
-  value: 10
-  interval: 10s
-- name: test_summary_0
-  type: summary
-  labels:
-    metric_type: summary
-    metric_interval: default
-    instance: second
-  value: 15
-  interval: 10s
-- name: test_histogram_0
-  type: histogram
-  labels:
-    metric_type: histogram
-    metric_interval: default
-    instance: first
-  value: 10
-  interval: 10s
-- name: test_histogram_0
-  type: histogram
-  labels:
-    metric_type: histogram
-    metric_interval: default
-    instance: second
-  value: 15
+  random_value:
+    min: 10
+    max: 20
   interval: 10s
